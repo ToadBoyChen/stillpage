@@ -277,6 +277,28 @@ describe("todo.controller", () => {
       });
     });
 
+    it("should save the completed state", async () => {
+      const mockTodo = {
+        userId: "user-123",
+        content: "Test todo",
+        completed: false,
+        save: jest.fn().mockResolvedValue(undefined),
+      };
+      req.params = { id: "todo-123" };
+      req.body = { completed: true };
+      (Todo.findById as jest.Mock).mockResolvedValue(mockTodo);
+
+      await updateTodo(req as AuthRequest, res as Response, next);
+
+      expect(mockTodo.completed).toBe(true);
+      expect(mockTodo.save).toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          todo: expect.objectContaining({ completed: true }),
+        }),
+      );
+    });
+
     it("should update todo content", async () => {
       const mockTodo = {
         userId: "user-123",
