@@ -111,7 +111,7 @@ export const updateTodo = async (
     }
 
     const { id } = req.params;
-    const { content, status } = req.body;
+    const { content, status, completed } = req.body;
 
     const todo = await Todo.findById(id);
     if (!todo) {
@@ -135,6 +135,10 @@ export const updateTodo = async (
         return res.status(400).json({ message: "Invalid status" });
       }
       todo.status = status;
+    }
+
+    if (typeof completed === "boolean") {
+      todo.completed = completed;
     }
 
     await todo.save();
